@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart</title>
+
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,Arial;}
+
+body{
+margin:0;
+background:#f9fafb;
+color:#333;
+}
+
+/* HEADER */
+header{
+background:white;
+padding:20px;
+text-align:center;
+font-size:22px;
+font-weight:600;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* CONTAINER */
+.container{
+max-width:800px;
+margin:auto;
+padding:20px;
+}
+
+/* CART CARD */
+.cart-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:white;
+padding:18px;
+margin-bottom:12px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+transition:0.3s;
+}
+
+.cart-item:hover{
+transform:translateY(-2px);
+}
+
+/* BUTTONS */
+button{
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+font-weight:500;
+}
+
+.qty-btn{
+background:#eee;
+color:#333;
+}
+
+.order-btn{
+width:100%;
+margin-top:20px;
+padding:16px;
+font-size:18px;
+background:#10b981;
+color:white;
+border-radius:10px;
+}
+
+.order-btn:hover{
+background:#059669;
+}
+
+/* TOTAL */
+.total{
+font-size:20px;
+margin-top:20px;
+text-align:right;
+font-weight:600;
+}
+
+/* EMPTY */
+.empty{
+text-align:center;
+font-size:18px;
+color:#888;
+margin-top:50px;
+}
+
+/* MODAL */
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+padding:25px;
+border-radius:12px;
+width:300px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:1px solid #ddd;
+}
+
+/* SUCCESS */
+.success{
+text-align:center;
+padding:50px;
+display:none;
+}
+
+.success h2{
+color:#10b981;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>🛒 Your Cart</header>
+
+<div class="container">
+
+<div id="cart-items"></div>
+<div class="total" id="total"></div>
+
+<button class="order-btn" onclick="openModal()">✅ Place Order</button>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content">
+<h3>Enter Table Number</h3>
+<input type="number" id="tableNo" placeholder="e.g. 5">
+<br><br>
+<button onclick="confirmOrder()">Confirm Order</button>
+</div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success" id="success">
+<h2>🎉 Order Placed!</h2>
+<p>Your food is being prepared 👨‍🍳</p>
+<p id="tableDisplay"></p>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function renderCart(){
+let container = document.getElementById("cart-items");
+container.innerHTML = "";
+
+if(cart.length === 0){
+container.innerHTML = "<p class='empty'>Your cart is empty 😢</p>";
+document.getElementById("total").innerText = "";
+document.querySelector(".order-btn").style.display = "none";
+return;
+}
+
+document.querySelector(".order-btn").style.display = "block";
+
+let total = 0;
+
+cart.forEach((item,index)=>{
+total += item.price * item.qty;
+
+container.innerHTML += `
+<div class="cart-item">
+<div>
+<strong>${item.name}</strong><br>
+₹${item.price} x ${item.qty}
+</div>
+
+<div>
+<button class="qty-btn" onclick="updateQty(${index},1)">+</button>
+<button class="qty-btn" onclick="updateQty(${index},-1)">-</button>
+</div>
+</div>
+`;
+});
+
+document.getElementById("total").innerText = "Total: ₹" + total;
+}
+
+function updateQty(index,delta){
+cart[index].qty += delta;
+
+if(cart[index].qty <= 0){
+cart.splice(index,1);
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+renderCart();
+}
+
+/* OPEN MODAL */
+function openModal(){
+if(cart.length === 0){
+alert("Cart is empty!");
+return;
+}
+document.getElementById("modal").style.display = "flex";
+}
+
+/* CONFIRM ORDER */
+function confirmOrder(){
+let table = document.getElementById("tableNo").value;
+
+if(!table){
+alert("Please enter table number!");
+return;
+}
+
+/* SUCCESS FLOW */
+document.getElementById("modal").style.display = "none";
+document.querySelector(".container").style.display = "none";
+
+document.getElementById("success").style.display = "block";
+document.getElementById("tableDisplay").innerText =
+"Table No: " + table;
+
+/* CLEAR CART */
+localStorage.removeItem("cart");
+cart = [];
+
+setTimeout(()=>{
+window.location.href = "index.html";
+},3000);
+}
+
+renderCart();
+</script>
+
+</body>
+</html>
