@@ -38,4 +38,4 @@ How to Use
 
 Live Demo
 
-🔗 https://restaurant-table-order.onrender.com
+🔗 https://resturant-table-order.onrender.com
