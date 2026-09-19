@@ -4,7 +4,7 @@ A web-based Restaurant Table Ordering System that allows customers to view the m
 
 🌐 Live Website
 
-👉 "Open Restaurant Table Order Website" (https://restaurant-table-order.onrender.com)
+👉 "Open Restaurant Table Order Website" (https://resturant-table-order.onrender.com)
 
 Features
 
